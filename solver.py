@@ -1,0 +1,95 @@
+from calc import calculate_erlang_b, calculate_engset
+
+
+def solve_erlang_b(A=None, V=None, PB=None, tol=1e-6):
+    params = [A, V, PB]
+    if params.count(None) != 1:
+        raise ValueError("Podaj dokładnie dwie zmienne. Jedna musi być równa None.")
+
+    # blokada
+    if PB is None:
+        return calculate_erlang_b(A, V)
+
+    # minimalna blokada
+    if V is None:
+        v = 1
+        while calculate_erlang_b(A, v) > PB:
+            v += 1
+        return v
+
+    # ruch A
+    if A is None:
+        if PB <= 0.0: return 0.0
+        if PB >= 1.0: return float('inf')
+
+        low = 0.0
+        high = 1.0
+
+        while calculate_erlang_b(high, V) < PB:
+            high *= 2.0
+
+        while high - low > tol:
+            mid = (low + high) / 2.0
+            if calculate_erlang_b(mid, V) < PB:
+                low = mid
+            else:
+                high = mid
+        return (low + high) / 2.0
+
+
+def solve_engset(S=None, V=None, alpha=None, PB=None, tol=1e-6):
+    params = [S, V, alpha, PB]
+    if params.count(None) != 1:
+        raise ValueError("Podaj dokładnie trzy zmienne. Jedna musi być równa None.")
+
+    # blokada
+    if PB is None:
+        return calculate_engset(S, V, alpha)
+
+    # liczba kanałó
+    if V is None:
+        v = 1
+        while v < S and calculate_engset(S, v, alpha) > PB:
+            v += 1
+        return v
+
+    # liczba źródeł
+    if S is None:
+        s = V + 1
+        while calculate_engset(s, V, alpha) <= PB:
+            s += 1
+        return s - 1
+    # alpha
+    if alpha is None:
+        if PB <= 0.0: return 0.0
+        if PB >= 1.0: return float('inf')
+
+        low = 0.0
+        high = 1.0
+        while calculate_engset(S, V, high) < PB:
+            high *= 2.0
+
+        while high - low > tol:
+            mid = (low + high) / 2.0
+            if calculate_engset(S, V, mid) < PB:
+                low = mid
+            else:
+                high = mid
+        return (low + high) / 2.0
+
+
+# if __name__ == "__main__":
+#     print("=== TESTY ERLANGA B ===")
+#     print(" PB (A=5, V=2):", solve_erlang_b(A=5, V=2, PB=None))
+#     print(" V (A=5, PB=0.724):", solve_erlang_b(A=5, V=None, PB=0.724137))
+#     print(" A (V=2, PB=0.724):", solve_erlang_b(A=None, V=2, PB=0.724137))
+#     print()
+#
+#     print("=== TESTY ENGSETA ===")
+#
+#     pb_test = calculate_engset(10, 2, 0.5)
+#
+#     print(f" PB (S=10, V=2, alpha=0.5):", solve_engset(S=10, V=2, alpha=0.5, PB=None))
+#     print(f" V (S=10, alpha=0.5, PB={pb_test:.4f}):", solve_engset(S=10, V=None, alpha=0.5, PB=pb_test))
+#     print(f" S (V=2, alpha=0.5, PB={pb_test:.4f}):", solve_engset(S=None, V=2, alpha=0.5, PB=pb_test))
+#     print(f" alpha (S=10, V=2, PB={pb_test:.4f}):", solve_engset(S=10, V=2, alpha=None, PB=pb_test))
