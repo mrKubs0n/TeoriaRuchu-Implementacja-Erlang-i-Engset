@@ -59,15 +59,28 @@ def solve_engset(S=None, V=None, alpha=None, PB=None, tol=1e-6):
         while calculate_engset(s, V, alpha) <= PB:
             s += 1
         return s - 1
+
+
     # alpha
     if alpha is None:
         if PB <= 0.0: return 0.0
         if PB >= 1.0: return float('inf')
 
+        # --- DODANE ZABEZPIECZENIE ---
+        if V >= S:
+            raise ValueError(f"Dla S={S} i V={V} prawdopodobieństwo blokady wynosi 0. Nie da się osiągnąć PB={PB}")
+        # -----------------------------
+
         low = 0.0
         high = 1.0
+        # Zabezpieczenie pętli przed zawieszeniem
+        max_iters = 1000
+        iters = 0
         while calculate_engset(S, V, high) < PB:
             high *= 2.0
+            iters += 1
+            if iters > max_iters:
+                raise ValueError("Przekroczono limit iteracji. Wynik dąży do nieskończoności.")
 
         while high - low > tol:
             mid = (low + high) / 2.0
