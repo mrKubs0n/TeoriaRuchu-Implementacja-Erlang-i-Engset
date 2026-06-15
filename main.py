@@ -1,8 +1,9 @@
 from GUIv2 import TeleTrafficApp
 
-## zakresy wartości (?)
-## wykresy (?)
-## 28.05
+## wejście N
+## tele nook - książka
+## zweryfikować wykresy
+## 18.05 gotowe
 
 def main():
         app = TeleTrafficApp()

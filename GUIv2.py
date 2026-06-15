@@ -48,11 +48,11 @@ class TeleTrafficApp(ctk.CTk):
         btn.pack(pady=(0, 20))
 
     def parse_input(self, value_str, type_func):
-        value_str = value_str.strip()
-        if not value_str:
+        value_str = value_str.strip().replace(',', '.')
+        if not value_str or value_str.lower() == "wykres":
             return None
 
-        #parsowanie dla przedziałów
+        # parsowanie dla przedziałów
         is_range = False
         parts = []
 
@@ -83,7 +83,7 @@ class TeleTrafficApp(ctk.CTk):
         if type_func == int:
             return list(range(int(start), int(end) + 1))
         else:
-            steps = 50  # Ilość próbek dla wartości zmiennoprzecinkowych
+            steps = 100
             return [start + i * (end - start) / steps for i in range(steps + 1)]
 
     # ================= ERLANG B =================
@@ -139,7 +139,16 @@ class TeleTrafficApp(ctk.CTk):
                     y_vals.append(solve_erlang_b(**kwargs))
 
                 plt.figure(figsize=(7, 5))
-                plt.plot(x_vals, y_vals, marker='o' if t_func == int else None, linestyle='-', color='#1f77b4')
+
+                # skala logarytmiczna dla PB
+                if target_var == 'PB':
+                    plt.yscale('log')
+
+                if target_var == 'V':
+                    plt.step(x_vals, y_vals, where='post', color='#1f77b4', linewidth=2)
+                else:
+                    plt.plot(x_vals, y_vals, marker='o' if t_func == int else None, linestyle='-', color='#1f77b4')
+
                 plt.title(f"Zależność {target_var} od {indep_var} (Erlang B)")
                 plt.xlabel(f"Wartość {indep_var}")
                 plt.ylabel(f"Szukane {target_var}")
@@ -220,15 +229,22 @@ class TeleTrafficApp(ctk.CTk):
                     except ValueError:
                         y_vals.append(float('nan'))
 
-
-
                 if all(math.isnan(y) for y in y_vals):
                     self.show_message("BŁĄD",
                                       "Dla podanych parametrów wygenerowanie wykresu jest matematycznie niemożliwe (zbyt mała liczba źródeł względem kanałów).")
                     return
 
                 plt.figure(figsize=(7, 5))
-                plt.plot(x_vals, y_vals, marker='o' if t_func == int else None, linestyle='-', color='#ff7f0e')
+
+                # skala logarytmiczna dla PB
+                if target_var == 'PB':
+                    plt.yscale('log')
+
+                if target_var in ['S', 'V']:
+                    plt.step(x_vals, y_vals, where='post', color='#ff7f0e', linewidth=2)
+                else:
+                    plt.plot(x_vals, y_vals, marker='o' if t_func == int else None, linestyle='-', color='#ff7f0e')
+
                 plt.title(f"Zależność {target_var} od {indep_var} (Engset)")
                 plt.xlabel(f"Wartość {indep_var}")
                 plt.ylabel(f"Szukane {target_var}")

@@ -46,7 +46,7 @@ def solve_engset(S=None, V=None, alpha=None, PB=None, tol=1e-6):
     if PB is None:
         return calculate_engset(S, V, alpha)
 
-    # liczba kanałó
+    # liczba kanałów
     if V is None:
         v = 1
         while v < S and calculate_engset(S, v, alpha) > PB:
@@ -60,20 +60,16 @@ def solve_engset(S=None, V=None, alpha=None, PB=None, tol=1e-6):
             s += 1
         return s - 1
 
-
     # alpha
     if alpha is None:
         if PB <= 0.0: return 0.0
         if PB >= 1.0: return float('inf')
 
-        # --- DODANE ZABEZPIECZENIE ---
         if V >= S:
             raise ValueError(f"Dla S={S} i V={V} prawdopodobieństwo blokady wynosi 0. Nie da się osiągnąć PB={PB}")
-        # -----------------------------
 
         low = 0.0
         high = 1.0
-        # Zabezpieczenie pętli przed zawieszeniem
         max_iters = 1000
         iters = 0
         while calculate_engset(S, V, high) < PB:
@@ -89,20 +85,3 @@ def solve_engset(S=None, V=None, alpha=None, PB=None, tol=1e-6):
             else:
                 high = mid
         return (low + high) / 2.0
-
-
-# if __name__ == "__main__":
-#     print("=== TESTY ERLANGA B ===")
-#     print(" PB (A=5, V=2):", solve_erlang_b(A=5, V=2, PB=None))
-#     print(" V (A=5, PB=0.724):", solve_erlang_b(A=5, V=None, PB=0.724137))
-#     print(" A (V=2, PB=0.724):", solve_erlang_b(A=None, V=2, PB=0.724137))
-#     print()
-#
-#     print("=== TESTY ENGSETA ===")
-#
-#     pb_test = calculate_engset(10, 2, 0.5)
-#
-#     print(f" PB (S=10, V=2, alpha=0.5):", solve_engset(S=10, V=2, alpha=0.5, PB=None))
-#     print(f" V (S=10, alpha=0.5, PB={pb_test:.4f}):", solve_engset(S=10, V=None, alpha=0.5, PB=pb_test))
-#     print(f" S (V=2, alpha=0.5, PB={pb_test:.4f}):", solve_engset(S=None, V=2, alpha=0.5, PB=pb_test))
-#     print(f" alpha (S=10, V=2, PB={pb_test:.4f}):", solve_engset(S=10, V=2, alpha=None, PB=pb_test))

@@ -1,6 +1,3 @@
-import math
-
-
 def calculate_erlang_b(A: float, V: int) -> float:
     # A - ruch całkowity - w Erl
     # V - dostępne kanały
@@ -16,17 +13,10 @@ def calculate_engset(S: int, V: int, alpha: float) -> float:
     # V - dostępne kanały
     # alpha - natężenie ruchu jednego źródła
     if V >= S: return 0.0
-    d = 0.0
-    for i in range(V + 1):
-        d += math.comb(S - 1, i) * (alpha ** i)
-    n = math.comb(S - 1, V) * (alpha ** V)
-    return n / d
+    if alpha <= 0.0: return 0.0
 
+    inv_PB = 1.0
+    for i in range(1, V + 1):
+        inv_PB = 1.0 + (i / ((S - i) * alpha)) * inv_PB
 
-# if __name__ == "__main__":
-#     print("--- Erlang B  ---")
-#     print(f"PB:",calculate_erlang_b(5, 2))
-#
-#     print("--- Engset ---")
-#     print(f"PB:",calculate_engset(5, 2, 0.5))
-
+    return 1.0 / inv_PB
