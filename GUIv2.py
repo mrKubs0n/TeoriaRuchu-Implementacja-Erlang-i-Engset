@@ -149,7 +149,10 @@ class TeleTrafficApp(ctk.CTk):
                 else:
                     plt.plot(x_vals, y_vals, marker='o' if t_func == int else None, linestyle='-', color='#1f77b4')
 
-                plt.title(f"Zależność {target_var} od {indep_var} (Erlang B)")
+                fixed_params = [f"{k}={v}" for k, v in inputs.items() if k != target_var and k != indep_var]
+                fixed_str = ", ".join(fixed_params)
+
+                plt.title(f"Zależność {target_var} od {indep_var} (Erlang B) dla: {fixed_str}")
                 plt.xlabel(f"Wartość {indep_var}")
                 plt.ylabel(f"Szukane {target_var}")
                 plt.grid(True, linestyle='--', alpha=0.7)
@@ -243,9 +246,12 @@ class TeleTrafficApp(ctk.CTk):
                 if target_var in ['S', 'V']:
                     plt.step(x_vals, y_vals, where='post', color='#ff7f0e', linewidth=2)
                 else:
-                    plt.plot(x_vals, y_vals, marker='o' if t_func == int else None, linestyle='-', color='#ff7f0e')
+                    plt.plot(x_vals, y_vals, marker='.' if t_func == int else None, linestyle='-', color='#ff7f0e')
 
-                plt.title(f"Zależność {target_var} od {indep_var} (Engset)")
+                fixed_params = [f"{k}={v}" for k, v in inputs.items() if k != target_var and k != indep_var]
+                fixed_str = ", ".join(fixed_params)
+
+                plt.title(f"Zależność {target_var} od {indep_var} (Engset) dla {fixed_str}")
                 plt.xlabel(f"Wartość {indep_var}")
                 plt.ylabel(f"Szukane {target_var}")
                 plt.grid(True, linestyle='--', alpha=0.7)
