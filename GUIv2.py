@@ -72,7 +72,7 @@ class TeleTrafficApp(ctk.CTk):
                     start, end = end, start
                 return ("RANGE", start, end, type_func)
             except ValueError:
-                pass  # W przypadku błędu przejdź do standardowego parsowania
+                pass  # w przypadku błędu standardowe parsowanie
 
         try:
             return type_func(value_str)
@@ -242,6 +242,7 @@ class TeleTrafficApp(ctk.CTk):
                 # skala logarytmiczna dla PB
                 if target_var == 'PB':
                     plt.yscale('log')
+
 
                 if target_var in ['S', 'V']:
                     plt.step(x_vals, y_vals, where='post', color='#ff7f0e', linewidth=2)
